@@ -1,4 +1,5 @@
 const express = require('express');
+const config = require('../config');
 
 const app = express();
 
@@ -239,6 +240,6 @@ app.post('/api/login', (request, response) => {
   */
 });
 
-app.listen(1337, () => {
-  console.log('Server running on port 1337'); // eslint-disable-line no-console
+app.listen(config.port, () => {
+  console.log(`Server running on port ${config.port}`); // eslint-disable-line no-console
 });
