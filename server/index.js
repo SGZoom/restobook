@@ -4,61 +4,87 @@ const app = express();
 
 app.get('/api/posts', (request, response) => {
   /*
-    API to return posts
+    API to return latest posts
 
     1.
-      request: /api/posts
+      request: /api/posts?max_time=:now&count=:n
       response: {
         pagination: {
-          per_page: posts per page,
-          page: 1,
-          total: total number of posts,
-          pages: total number of pages,
-        },
+          count: at max n (number of records returned)
+          total: total posts after this timestamp
+        }
         posts: [
           {
+            id,
             text,
             created_at,
-            author
+            author: username,
+            comments_count
           }
         ]
       }
 
     2.
-      request: /api/posts?page=:n
+      request: /api/posts?max_time=:timestamp_of_oldest_fetched_post&count=:n
       response: {
         pagination: {
-          per_page: posts per page,
-          page: n,
-          total: total number of posts,
-          pages: total number of pages,
-        },
+          count: at max n (number of records returned)
+          total: total posts after this timestamp
+        }
         posts: [
           {
+            id,
             text,
             created_at,
-            author
+            author: username,
+            comments_count
           }
         ]
       }
 
     3.
-      request: /api/posts?user=:user_id
+      request: /api/posts?author=:username&max_time=:timestamp&count=:n
       response: {
         pagination: {
-          per_page: posts per page,
-          page: 1,
-          total: total number of posts,
-          pages: total number of pages,
-        },
+          count: at max n (number of records returned)
+          total: total posts after this timestamp
+        }
         posts: [
           {
+            id,
             text,
             created_at,
-            author
+            author: username,
+            comments_count
           }
         ]
       }
+  */
+});
+
+app.get('/api/post/:post_id', (request, response) => {
+  /*
+    API to fetch a single post (and the first page of comments for the post)
+
+    request: /api/posts/:post_id
+    response: {
+      post: {
+        id,
+        text,
+        created_at,
+        author: username,
+        comments_count,
+      }
+      comments: [
+        {
+          id,
+          author: username,
+          created_at,
+          text,
+          replies_count
+        }
+      ]
+    }
   */
 });
 
@@ -71,36 +97,36 @@ app.post('/api/posts', (request, response) => {
       text: post message
     }
     headers: {
-      authorization: jwt token for user information
+      authorization: jwt token for user information (take author from here)
     }
     response: {
+      id,
       text,
       created_at,
-      author
+      author: username
     }
   */
 });
 
-app.get('/api/comments', (request, response) => {
+app.get('/api/posts/:post_id/comments', (request, response) => {
   /*
     API to return comments for a given post
 
     1.
-      request: /api/comments?post=:post_id
+      request: /api/posts/:post_id/comments
       response: {
         pagination: {
-          per_page: comments per page,
-          page: 1,
-          total: total number of comments,
-          pages: total number of pages,
+          count: n,
+          total: remaining comments to load
         },
         post_id: id of post,
-        parent_comment: null,
         comments: [
           {
-            author,
+            id,
+            author: username,
             created_at,
-            text
+            text,
+            replies_count
           }
         ]
       }
@@ -109,21 +135,27 @@ app.get('/api/comments', (request, response) => {
 
 app.post('/api/posts/:post_id/comments', (request, response) => {
   /*
-    API to create a comment
+    API to create a comment (and update post's comment count)
 
     1.
       request: /api/posts/:post_id/comments
+      params: {
+        post_id: ID of post for which the comment is being made
+      }
       data: {
         text: comment text
       },
       header: {
-        authorization: to get user information
+        authorization: to get user information (to get author details)
       }
       response: {
-        author,
-        created_at,
-        text,
-        post_id
+        post_id: ID of post for which the comment is being added,
+        comment: {
+          id,
+          author: username,
+          created_at,
+          text
+        }
       }
   */
 });
@@ -135,15 +167,14 @@ app.get('/api/comments/:comment_id/replies', (request, response) => {
     request: /api/comments/:comment_id/replies
       response: {
         pagination: {
-          per_page: replies per page,
-          page: 1,
-          total: total number of replies,
-          pages: total number of pages,
+          count: n
+          total: The number of replies left to be loaded
         },
-        parent_comment: id of parent comment,
+        comment_id: id of parent comment,
         replies: [
           {
-            author,
+            id,
+            author: username,
             created_at,
             text
           }
@@ -154,9 +185,12 @@ app.get('/api/comments/:comment_id/replies', (request, response) => {
 
 app.post('/api/comments/:comment_id/replies', (request, response) => {
   /*
-    API to create a reply to a comment
+    API to create a reply to a comment (and update comment with reply count)
 
     request: /api/comments/:comment_id/replies
+    params: {
+      comment_id: ID for which the reply is being made
+    }
     data: {
       text: reply text
     },
@@ -164,38 +198,23 @@ app.post('/api/comments/:comment_id/replies', (request, response) => {
       authorization: to get user information
     }
     response: {
-      author,
-      created_at,
-      text,
-      post_id
+      comment_id,
+      reply: {
+        author: username,
+        created_at,
+        text,
+      }
     }
   */
 });
 
-app.get('/api/users', (request, response) => {
-  /*
-    API to fetch users
-
-    request: /api/users?query=:query_string
-    response: {
-      users: [
-        {
-          username,
-          id
-        }
-      ]
-    }
-  */
-});
-
-app.post('/api/users', (request, response) => {
+app.post('/api/signup', (request, response) => {
   /*
     API to create a user
 
     request: /api/users/
     data: {
-      name,
-      email: this should be unique,
+      username: this should be unique,
       password,
       password_confirmation
     },
@@ -211,7 +230,7 @@ app.post('/api/login', (request, response) => {
 
     request: /api/login
     data: {
-      email,
+      username,
       password
     },
     response: {
