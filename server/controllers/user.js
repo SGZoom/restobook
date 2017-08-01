@@ -123,7 +123,7 @@ module.exports = {
         response.status(201).json({ token });
       })
       .catch((err) => {
-        response.status(400).json(err);
+        response.status(500).json(err);
       });
     return null;
   },
@@ -145,7 +145,7 @@ module.exports = {
         response.status(201).json({ token });
       })
       .catch((err) => {
-        response.status(400).json(err);
+        response.status(500).json(err);
       });
     return null;
   },

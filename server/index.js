@@ -1,113 +1,15 @@
 const express = require('express');
 const config = require('../config');
+const userController = require('./controllers/user');
+const postController = require('./controllers/posts');
 
 const app = express();
 
-app.get('/api/posts', (request, response) => {
-  /*
-    API to return latest posts
+app.get('/api/posts', postController.getPosts);
 
-    1.
-      request: /api/posts?max_time=:now&count=:n
-      response: {
-        pagination: {
-          count: at max n (number of records returned)
-          total: total posts after this timestamp
-        }
-        posts: [
-          {
-            id,
-            text,
-            created_at,
-            author: username,
-            comments_count
-          }
-        ]
-      }
+app.get('/api/post/:post_id', postController.getPostById);
 
-    2.
-      request: /api/posts?max_time=:timestamp_of_oldest_fetched_post&count=:n
-      response: {
-        pagination: {
-          count: at max n (number of records returned)
-          total: total posts after this timestamp
-        }
-        posts: [
-          {
-            id,
-            text,
-            created_at,
-            author: username,
-            comments_count
-          }
-        ]
-      }
-
-    3.
-      request: /api/posts?author=:username&max_time=:timestamp&count=:n
-      response: {
-        pagination: {
-          count: at max n (number of records returned)
-          total: total posts after this timestamp
-        }
-        posts: [
-          {
-            id,
-            text,
-            created_at,
-            author: username,
-            comments_count
-          }
-        ]
-      }
-  */
-});
-
-app.get('/api/post/:post_id', (request, response) => {
-  /*
-    API to fetch a single post (and the first page of comments for the post)
-
-    request: /api/posts/:post_id
-    response: {
-      post: {
-        id,
-        text,
-        created_at,
-        author: username,
-        comments_count,
-      }
-      comments: [
-        {
-          id,
-          author: username,
-          created_at,
-          text,
-          replies_count
-        }
-      ]
-    }
-  */
-});
-
-app.post('/api/posts', (request, response) => {
-  /*
-    API to create a post
-
-    request: /api/posts
-    data: {
-      text: post message
-    }
-    headers: {
-      authorization: jwt token for user information (take author from here)
-    }
-    response: {
-      id,
-      text,
-      created_at,
-      author: username
-    }
-  */
-});
+app.post('/api/posts', postController.createPost);
 
 app.get('/api/posts/:post_id/comments', (request, response) => {
   /*
@@ -209,36 +111,9 @@ app.post('/api/comments/:comment_id/replies', (request, response) => {
   */
 });
 
-app.post('/api/signup', (request, response) => {
-  /*
-    API to create a user
+app.post('/api/signup', userController.signUpUser);
 
-    request: /api/users/
-    data: {
-      username: this should be unique,
-      password,
-      password_confirmation
-    },
-    response: {
-      token: the JWT
-    }
-  */
-});
-
-app.post('/api/login', (request, response) => {
-  /*
-    API to login in a user
-
-    request: /api/login
-    data: {
-      username,
-      password
-    },
-    response: {
-      token
-    }
-  */
-});
+app.post('/api/login', userController.loginUser);
 
 app.listen(config.port, () => {
   console.log(`Server running on port ${config.port}`); // eslint-disable-line no-console
