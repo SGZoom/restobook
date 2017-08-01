@@ -108,9 +108,7 @@ module.exports = {
     const isValid = validateSignUp(body);
 
     if (isValid.fail) {
-      response.status(isValid.statusCode).json({
-        msg: isValid.msg,
-      });
+      response.status(isValid.statusCode).json(isValid.msg);
 
       return null;
     }
@@ -136,9 +134,7 @@ module.exports = {
     const isValid = validateLogin(request.body);
 
     if (isValid.fail) {
-      response.status(isValid.statusCode).json({
-        msg: isValid.msg,
-      });
+      response.status(isValid.statusCode).json(isValid.msg);
 
       return null;
     }

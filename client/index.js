@@ -6,8 +6,10 @@ import { Provider } from 'react-redux';
 import FeedContainer from './containers/Feed';
 import ProfileContainer from './containers/Profile';
 import PostContainer from './containers/Post';
+import RegisterContainer from './containers/Register';
 
 import store from './store';
+import './styles/index.scss';
 
 const APP_CONTAINER_NAME = 'app-container';
 
@@ -16,6 +18,7 @@ const App = () => (
     <Router>
       <div>
         <Route exact path="/" component={FeedContainer} />
+        <Route exact path="/register" component={RegisterContainer} />
         <Route
           path="/user/:user_id"
           component={ProfileContainer}

@@ -34,7 +34,7 @@ function buildQuery(params = {}) {
 
   if (minTime) {
     query.created_at = {
-      $gte: minTime,
+      $gt: minTime,
     };
   }
 
@@ -48,7 +48,7 @@ function fetchPosts(query, count) {
       .sort({
         created_at: '-1',
       })
-      .limit(count)
+      .limit(parseInt(count, 10))
       .exec((err, posts) => {
         if (err) {
           reject(new Error(err));
@@ -151,7 +151,7 @@ module.exports = {
         });
       })
       .catch((err) => {
-        response.status(500).json(err);
+        response.status(500).json(err.message);
       });
   },
   getPostById: (request, response) => {

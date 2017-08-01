@@ -51,12 +51,14 @@ function fetchReplies(query, count) {
 }
 
 function verifyToken(token) {
-  jwt.verify(token, config.jwtSecret, (err, decoded) => {
-    if (err) {
-      return null;
-    }
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, config.jwtSecret, (err, decoded) => {
+      if (err) {
+        reject(new Error('Invalid Token'));
+      }
 
-    return decoded && decoded.username;
+      resolve(decoded && decoded.username);
+    });
   });
 }
 
@@ -133,21 +135,22 @@ module.exports = {
         response.status(500).json(err);
       });
   },
-  createReply: (request, response) => {
+  createReply: (request, response, next) => {
     const { text } = request.body;
-    const author = request.headers.authorization && verifyToken(request.headers.authorization.split(' ')[1]);
     const { comment_id: commentId } = request.params;
     const isValid = validateReplyCreation(text, author, commentId);
 
-    if (isValid.fail) {
-      response.status(isValid.statusCode).json({
-        msg: isValid.msg,
-      });
+    verifyToken(request.headers.authorization && request.headers.authorization.split(' ')[1])
+      .then((author) => {
+        if (isValid.fail) {
+          response.status(isValid.statusCode).json({
+            msg: isValid.msg,
+          });
+          next();
+        }
 
-      return null;
-    }
-
-    saveReply(text, author, commentId)
+        return saveReply(text, author, commentId);
+      })
       .then((reply) => {
         response.status(201).json({
           comment_id: commentId,

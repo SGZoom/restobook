@@ -39,7 +39,7 @@ function fetchComments(query, count) {
       .sort({
         created_at: '-1',
       })
-      .limit(count)
+      .limit(parseInt(count, 10))
       .exec((err, comments) => {
         if (err) {
           reject(new Error(err));
@@ -51,12 +51,14 @@ function fetchComments(query, count) {
 }
 
 function verifyToken(token) {
-  jwt.verify(token, config.jwtSecret, (err, decoded) => {
-    if (err) {
-      return null;
-    }
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, config.jwtSecret, (err, decoded) => {
+      if (err) {
+        reject(new Error('Invalid token'));
+      }
 
-    return decoded && decoded.username;
+      resolve(decoded && decoded.username);
+    });
   });
 }
 
@@ -133,21 +135,21 @@ module.exports = {
         response.status(500).json(err);
       });
   },
-  createComment: (request, response) => {
+  createComment: (request, response, next) => {
     const { text } = request.body;
-    const author = request.headers.authorization && verifyToken(request.headers.authorization.split(' ')[1]);
     const { post_id: postId } = request.params;
-    const isValid = validateCommentCreation(text, author, postId);
+    verifyToken(request.headers.authorization && request.headers.authorization.split(' ')[1])
+      .then((author) => {
+        const isValid = validateCommentCreation(text, author, postId);
 
-    if (isValid.fail) {
-      response.status(isValid.statusCode).json({
-        msg: isValid.msg,
-      });
-
-      return null;
-    }
-
-    saveComment(text, author, postId)
+        if (isValid.fail) {
+          response.status(isValid.statusCode).json({
+            msg: isValid.msg,
+          });
+          next();
+        }
+        return saveComment(text, author, postId);
+      })
       .then((comment) => {
         response.status(201).json({
           post_id: postId,
@@ -155,7 +157,7 @@ module.exports = {
         });
       })
       .catch((err) => {
-        response.status(500).json(err);
+        response.status(500).json(err.message);
       });
 
     return null;

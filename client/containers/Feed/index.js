@@ -6,7 +6,7 @@ class FeedContainer extends Component {
   }
   render() {
     return (
-      <h1>Feed Container</h1>
+      <p>Feed Container</p>
     );
   }
 }
