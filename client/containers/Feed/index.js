@@ -4,12 +4,13 @@ import styles from './index.scss';
 
 import PostCreator from '../../components/PostCreator';
 import PostItem from '../../components/PostItem';
-import { updateNewPostText, createPost } from '../../actions/feedActions';
+import { updateNewPostText, createNewPost } from '../../actions/feedActions';
 
 class FeedContainer extends Component {
   constructor(args) {
     super(args);
     this.handlePostCreatorInputChange = this.handlePostCreatorInputChange.bind(this);
+    this.handleCreatePost = this.handleCreatePost.bind(this);
   }
 
   componentDidMount() {
@@ -22,7 +23,7 @@ class FeedContainer extends Component {
 
   handleCreatePost(event) {
     event.preventDefault();
-    this.props.dispatch(createPost());
+    this.props.dispatch(createNewPost());
   }
 
   render() {
@@ -31,11 +32,17 @@ class FeedContainer extends Component {
         <div>{this.props.feed.error}</div>
         <PostCreator
           handleInputChange={this.handlePostCreatorInputChange}
+          createPost={this.handleCreatePost}
           postText={this.props.feed.newPostText}
         />
         {
-          this.props.feed.posts.map(({ username, _id: id, created_at: createdAt }) =>
-            <PostItem key={id} username={username} created_at={createdAt} />,
+          this.props.feed.posts.map(({ username, _id: id, created_at: createdAt, text }) =>
+            (<PostItem
+              key={id}
+              username={username}
+              createdAt={createdAt}
+              text={text}
+            />),
           )
         }
         <div />
