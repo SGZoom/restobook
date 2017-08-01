@@ -2,6 +2,7 @@ const express = require('express');
 const config = require('../config');
 const userController = require('./controllers/user');
 const postController = require('./controllers/posts');
+const commentController = require('./controllers/comments');
 
 const app = express();
 
@@ -11,57 +12,9 @@ app.get('/api/post/:post_id', postController.getPostById);
 
 app.post('/api/posts', postController.createPost);
 
-app.get('/api/posts/:post_id/comments', (request, response) => {
-  /*
-    API to return comments for a given post
+app.get('/api/posts/:post_id/comments', commentController.getComments);
 
-    1.
-      request: /api/posts/:post_id/comments
-      response: {
-        pagination: {
-          count: n,
-          total: remaining comments to load
-        },
-        post_id: id of post,
-        comments: [
-          {
-            id,
-            author: username,
-            created_at,
-            text,
-            replies_count
-          }
-        ]
-      }
-  */
-});
-
-app.post('/api/posts/:post_id/comments', (request, response) => {
-  /*
-    API to create a comment (and update post's comment count)
-
-    1.
-      request: /api/posts/:post_id/comments
-      params: {
-        post_id: ID of post for which the comment is being made
-      }
-      data: {
-        text: comment text
-      },
-      header: {
-        authorization: to get user information (to get author details)
-      }
-      response: {
-        post_id: ID of post for which the comment is being added,
-        comment: {
-          id,
-          author: username,
-          created_at,
-          text
-        }
-      }
-  */
-});
+app.post('/api/posts/:post_id/comments', commentController.createComment);
 
 app.get('/api/comments/:comment_id/replies', (request, response) => {
   /*

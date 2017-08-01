@@ -1,10 +1,28 @@
-const Post = require('../models/Post');
+const Comment = require('../models/Comment');
 const config = require('../../config');
 const jwt = require('jsonwebtoken');
 
+function buildQuery(queryParams = {}, params = {}) {
+  const { max_time: maxTime } = queryParams;
+  const { post_id: postId } = params;
+  const query = {};
+
+  if (maxTime) {
+    query.created_at = {
+      $lt: maxTime,
+    };
+  }
+
+  if (postId) {
+    query.post_id = postId;
+  }
+
+  return query;
+}
+
 function fetchPaginationDetails() {
   return new Promise((resolve, reject) => {
-    Post.count({}, (err, count) => {
+    Comment.count({}, (err, count) => {
       if (err) {
         reject(new Error(err));
       }
@@ -14,67 +32,21 @@ function fetchPaginationDetails() {
   });
 }
 
-function buildQuery(params = {}) {
-  const { max_time: maxTime, min_time: minTime, author } = params;
-  const query = {};
-
-  if (author) {
-    query.username = author;
-  }
-
-  if (maxTime && minTime) {
-    return query;
-  }
-
-  if (maxTime) {
-    query.created_at = {
-      $lt: maxTime,
-    };
-  }
-
-  if (minTime) {
-    query.created_at = {
-      $gte: minTime,
-    };
-  }
-
-  return query;
-}
-
-function fetchPosts(query, count) {
+function fetchComments(query, count) {
   return new Promise((resolve, reject) => {
-    Post
+    Comment
       .find(query)
       .sort({
         created_at: '-1',
       })
       .limit(count)
-      .exec((err, posts) => {
+      .exec((err, comments) => {
         if (err) {
           reject(new Error(err));
         }
 
-        resolve(posts);
+        resolve(comments);
       });
-  });
-}
-
-function fetchPostById(id) {
-  return new Promise((resolve, reject) => {
-    if (id) {
-      Post
-        .findOne({
-          _id: id,
-        })
-        .exec((err, post) => {
-          if (err) {
-            reject(new Error(err));
-          }
-
-          resolve(post);
-        });
-    }
-    reject(new Error('ID not set'));
   });
 }
 
@@ -88,7 +60,7 @@ function verifyToken(token) {
   });
 }
 
-function validatePostCreation(text, author) {
+function validateCommentCreation(text, author, postId) {
   if (!text) {
     return {
       fail: true,
@@ -105,33 +77,41 @@ function validatePostCreation(text, author) {
     };
   }
 
+  if (!postId) {
+    return {
+      fail: true,
+      msg: 'No post to attach comment to',
+      statusCode: 400,
+    };
+  }
+
   return {
     fail: false,
   };
 }
 
-function savePost(text, author) {
+function saveComment(text, author, postId) {
   return new Promise((resolve, reject) => {
-    Post
+    Comment
       .create({
         text,
         username: author,
+        post_id: postId,
         created_at: new Date(),
-        comments_count: 0,
       })
-      .exec((err, post) => {
+      .exec((err, comment) => {
         if (err) {
           reject(new Error(err));
         }
 
-        resolve(post);
+        resolve(comment);
       });
   });
 }
 
 module.exports = {
-  getPosts: (request, response) => {
-    const query = buildQuery(request.query);
+  getComments: (request, response) => {
+    const query = buildQuery(request.query, request.params);
     let pagination;
 
     fetchPaginationDetails()
@@ -140,35 +120,24 @@ module.exports = {
           count: request.query.count || 25,
           total,
         };
-        return fetchPosts(query, pagination.count);
+        return fetchComments(query, pagination.count);
       })
-      .then((posts) => {
+      .then((comments) => {
         response.status(200).json({
           pagination,
-          posts,
+          post_id: request.params.post_id,
+          comments,
         });
       })
       .catch((err) => {
         response.status(500).json(err);
       });
   },
-  getPostById: (request, response) => {
-    const id = request.params && request.params.post_id;
-
-    fetchPostById(id)
-      .then((post) => {
-        response.status(200).json({
-          post,
-        });
-      })
-      .catch((err) => {
-        response.status(500).json(err);
-      });
-  },
-  createPost: (request, response) => {
+  createComment: (request, response) => {
     const { text } = request.body;
     const author = request.headers.authorization && verifyToken(request.headers.authorization.split(' ')[1]);
-    const isValid = validatePostCreation(text, author);
+    const { post_id: postId } = request.params;
+    const isValid = validateCommentCreation(text, author, postId);
 
     if (isValid.fail) {
       response.status(isValid.statusCode).json({
@@ -178,9 +147,9 @@ module.exports = {
       return null;
     }
 
-    savePost(text, author)
-      .then((post) => {
-        response.status(201).json(post);
+    saveComment(text, author, postId)
+      .then((comment) => {
+        response.status(201).json(comment);
       })
       .catch((err) => {
         response.status(500).json(err);

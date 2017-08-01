@@ -5,11 +5,7 @@ const CommentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  author: {
-    type: String,
-    required: true,
-  },
-  display_name: {
+  username: {
     type: String,
     required: true,
   },
@@ -19,10 +15,6 @@ const CommentSchema = new mongoose.Schema({
   },
   post_id: {
     type: String,
-    required: true,
-  },
-  replies_count: {
-    type: Number,
     required: true,
   },
 });
