@@ -21,4 +21,6 @@ const ReplySchema = new mongoose.Schema({
 
 const Reply = mongoose.model('Reply', ReplySchema);
 
-export default Reply;
+module.exports = {
+  Reply,
+};

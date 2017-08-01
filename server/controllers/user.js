@@ -1,5 +1,5 @@
 const config = require('../../config');
-const User = require('../models/User');
+const User = require('../models/User').User;
 const jwt = require('jsonwebtoken');
 
 function validateSignUp(user) {

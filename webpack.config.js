@@ -8,13 +8,13 @@ const cssNext = require('postcss-cssnext');
 const cssNested = require('postcss-nested');
 
 const CLIENT_PATH_PREFIX = 'client';
-const ENTRY_POINT_APP = 'index.jsx';
+const ENTRY_POINT_APP = 'index.js';
 const CLIENT_BUILD_PATH = 'build';
 
 module.exports = {
   entry: {
     app: path.resolve(__dirname, CLIENT_PATH_PREFIX, ENTRY_POINT_APP),
-    vendor: ['react', 'react-router', 'react-dom', 'react-router-dom'],
+    vendor: ['react', 'react-router', 'react-dom', 'react-router-dom', 'react-redux', 'redux', 'redux-logger', 'redux-thunk'],
   },
   output: {
     path: path.resolve(__dirname, CLIENT_PATH_PREFIX, CLIENT_BUILD_PATH),

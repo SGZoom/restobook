@@ -1,4 +1,4 @@
-const Post = require('../models/Post');
+const Post = require('../models/Post').Post;
 const config = require('../../config');
 const jwt = require('jsonwebtoken');
 

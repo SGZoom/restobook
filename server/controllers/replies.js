@@ -1,4 +1,4 @@
-const Reply = require('../models/Reply');
+const Reply = require('../models/Reply').Reply;
 const config = require('../../config');
 const jwt = require('jsonwebtoken');
 
