@@ -3,6 +3,7 @@ const config = require('../config');
 const userController = require('./controllers/user');
 const postController = require('./controllers/posts');
 const commentController = require('./controllers/comments');
+const replyController = require('./controllers/replies');
 
 const app = express();
 
@@ -16,53 +17,9 @@ app.get('/api/posts/:post_id/comments', commentController.getComments);
 
 app.post('/api/posts/:post_id/comments', commentController.createComment);
 
-app.get('/api/comments/:comment_id/replies', (request, response) => {
-  /*
-    API to return replies for a comment
+app.get('/api/comments/:comment_id/replies', replyController.getReplies);
 
-    request: /api/comments/:comment_id/replies
-      response: {
-        pagination: {
-          count: n
-          total: The number of replies left to be loaded
-        },
-        comment_id: id of parent comment,
-        replies: [
-          {
-            id,
-            author: username,
-            created_at,
-            text
-          }
-        ]
-      }
-  */
-});
-
-app.post('/api/comments/:comment_id/replies', (request, response) => {
-  /*
-    API to create a reply to a comment (and update comment with reply count)
-
-    request: /api/comments/:comment_id/replies
-    params: {
-      comment_id: ID for which the reply is being made
-    }
-    data: {
-      text: reply text
-    },
-    header: {
-      authorization: to get user information
-    }
-    response: {
-      comment_id,
-      reply: {
-        author: username,
-        created_at,
-        text,
-      }
-    }
-  */
-});
+app.post('/api/comments/:comment_id/replies', replyController.createReply);
 
 app.post('/api/signup', userController.signUpUser);
 
