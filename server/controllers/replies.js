@@ -138,10 +138,10 @@ module.exports = {
   createReply: (request, response, next) => {
     const { text } = request.body;
     const { comment_id: commentId } = request.params;
-    const isValid = validateReplyCreation(text, author, commentId);
 
     verifyToken(request.headers.authorization && request.headers.authorization.split(' ')[1])
       .then((author) => {
+        const isValid = validateReplyCreation(text, author, commentId);
         if (isValid.fail) {
           response.status(isValid.statusCode).json({
             msg: isValid.msg,

@@ -7,6 +7,7 @@ import FeedContainer from './containers/Feed';
 import ProfileContainer from './containers/Profile';
 import PostContainer from './containers/Post';
 import RegisterContainer from './containers/Register';
+import LoginContainer from './containers/Login';
 
 import store from './store';
 import './styles/index.scss';
@@ -19,6 +20,7 @@ const App = () => (
       <div>
         <Route exact path="/" component={FeedContainer} />
         <Route exact path="/register" component={RegisterContainer} />
+        <Route exact path="/login" component={LoginContainer} />
         <Route
           path="/user/:user_id"
           component={ProfileContainer}
