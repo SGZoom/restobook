@@ -82,19 +82,23 @@ function createUser(query) {
 
 function findUser(username, password) {
   return new Promise((resolve, reject) => {
-    User.findOne({ username }, (err, user) => {
-      if (err) {
-        reject(new Error('Something went wrong'));
-      }
-      if (user === null) {
-        reject(new Error('User does not exist. Try signing up :)'));
-      }
-      if (user && user.password !== password) {
-        reject(new Error('Username and password are incorrect'));
-      }
+    User
+      .findOne({
+        username,
+      })
+      .exec((err, user) => {
+        if (err) {
+          reject(new Error('Something went wrong'));
+        }
+        if (user === null) {
+          reject(new Error('User does not exist. Try signing up :)'));
+        }
+        if (user && user.password !== password) {
+          reject(new Error('Username or password are incorrect'));
+        }
 
-      resolve(user);
-    });
+        resolve(user);
+      });
   });
 }
 
@@ -123,7 +127,7 @@ module.exports = {
         response.status(201).json({ token });
       })
       .catch((err) => {
-        response.status(500).json(err);
+        response.status(500).json(err.message);
       });
     return null;
   },
@@ -139,13 +143,13 @@ module.exports = {
       return null;
     }
 
-    findUser({ username: body.username, password: body.password })
+    findUser(body.username, body.password)
       .then((user) => {
         const token = jwt.sign({ username: user.username }, config.jwtSecret);
         response.status(201).json({ token });
       })
       .catch((err) => {
-        response.status(500).json(err);
+        response.status(500).json(err.message);
       });
     return null;
   },

@@ -15,7 +15,7 @@ mongoose.connect(config.db);
 
 app.get('/api/posts', postController.getPosts);
 
-app.get('/api/post/:post_id', postController.getPostById);
+app.get('/api/posts/:post_id', postController.getPostById);
 
 app.post('/api/posts', postController.createPost);
 

@@ -73,18 +73,21 @@ function fetchPostById(id) {
 
           resolve(post);
         });
+    } else {
+      reject(new Error('ID not set'));
     }
-    reject(new Error('ID not set'));
   });
 }
 
 function verifyToken(token) {
-  jwt.verify(token, config.jwtSecret, (err, decoded) => {
-    if (err) {
-      return null;
-    }
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, config.jwtSecret, (err, decoded) => {
+      if (err) {
+        reject(new Error('Invalid token'));
+      }
 
-    return decoded && decoded.username;
+      resolve(decoded && decoded.username);
+    });
   });
 }
 
@@ -118,8 +121,7 @@ function savePost(text, author) {
         username: author,
         created_at: new Date(),
         comments_count: 0,
-      })
-      .exec((err, post) => {
+      }, (err, post) => {
         if (err) {
           reject(new Error(err));
         }
@@ -162,30 +164,29 @@ module.exports = {
         });
       })
       .catch((err) => {
-        response.status(500).json(err);
+        response.status(500).json(err.message);
       });
   },
-  createPost: (request, response) => {
+  createPost: (request, response, next) => {
     const { text } = request.body;
-    const author = request.headers.authorization && verifyToken(request.headers.authorization.split(' ')[1]);
-    const isValid = validatePostCreation(text, author);
+    verifyToken(request.headers.authorization && request.headers.authorization.split(' ')[1])
+      .then((author) => {
+        const isValid = validatePostCreation(text, author);
 
-    if (isValid.fail) {
-      response.status(isValid.statusCode).json({
-        msg: isValid.msg,
-      });
-
-      return null;
-    }
-
-    savePost(text, author)
+        if (isValid.fail) {
+          response.status(isValid.statusCode).json({
+            msg: isValid.msg,
+          });
+          next();
+        }
+        return savePost(text, author);
+      })
       .then((post) => {
         response.status(201).json(post);
       })
       .catch((err) => {
-        response.status(500).json(err);
+        response.status(500).json(err.message);
       });
-
     return null;
   },
 };
