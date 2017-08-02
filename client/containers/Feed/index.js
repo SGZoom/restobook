@@ -4,7 +4,7 @@ import styles from './index.scss';
 
 import PostCreator from '../../components/PostCreator';
 import PostItem from '../../components/PostItem';
-import { updateNewPostText, createNewPost } from '../../actions/feedActions';
+import { updateNewPostText, createNewPost, fetchPosts } from '../../actions/feedActions';
 
 class FeedContainer extends Component {
   constructor(args) {
@@ -14,7 +14,7 @@ class FeedContainer extends Component {
   }
 
   componentDidMount() {
-    // call action to fetch latest posts
+    this.props.dispatch(fetchPosts());
   }
 
   handlePostCreatorInputChange(event) {
