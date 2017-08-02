@@ -7,7 +7,7 @@ import Replies from '../Replies';
 import styles from './index.scss';
 
 const Comment = ({ username, id, createdAt, text, handleReplyRequest,
-  replies, newReplyText, updateNewReply, createNewReply }) => {
+  replies, newReplyText, updateNewReply, createNewReply, count }) => {
   const userPermalink = `/user/${username}`;
   return (
     <div className={cn('ptb10', styles.item)}>
@@ -21,7 +21,7 @@ const Comment = ({ username, id, createdAt, text, handleReplyRequest,
           {`${distanceInWordsToNow(new Date(createdAt))} ago`}
         </span>
         <span className={styles.separated}>
-          <a onClick={event => handleReplyRequest(id, event)} role={'link'} tabIndex={'-1'}>{'Reply'}</a>
+          <a onClick={event => handleReplyRequest(id, event)} role={'link'} tabIndex={'-1'}>{`View Replies (${count || 0})`}</a>
         </span>
       </div>
       <div className={cn('ptb10', styles.text)}>

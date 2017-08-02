@@ -78,8 +78,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      '~': path.resolve(__dirname, 'node_modules'),
-      react: path.resolve(__dirname, 'node_modules/react'),
+      react: 'preact-compat',
+      'react-dom': 'preact-compat',
     },
   },
   plugins: [

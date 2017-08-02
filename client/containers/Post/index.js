@@ -74,10 +74,18 @@ class PostContainer extends Component {
         <div className={styles.comments}>
           {
             this.props.post.comments
-              .map(({ username, _id: id, created_at: createdAt, text, replies, newReplyText }) => (
+              .map(({
+                username,
+                _id: id,
+                created_at: createdAt,
+                text, replies,
+                newReplyText,
+                replies_count: count,
+              }) => (
                 <Comment
                   key={id}
                   id={id}
+                  count={count}
                   username={username}
                   createdAt={createdAt}
                   text={text}

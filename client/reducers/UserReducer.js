@@ -2,10 +2,11 @@ import * as actions from '../actions/actions';
 
 export default function reducer(
   state = {
-    username: 'rheaditi',
-    password: 'hello@world',
-    passwordConfirm: 'hello@world',
+    username: '',
+    password: '',
+    passwordConfirm: '',
     creating: false,
+    message: '',
   }, action) {
   let newState;
 
@@ -38,6 +39,34 @@ export default function reducer(
     }
 
     case actions.CREATE_USER_FAILURE: {
+      newState = {
+        ...state,
+        creating: false,
+        message: action.message,
+      };
+      break;
+    }
+
+    case actions.LOGIN_USER_REQUEST: {
+      newState = {
+        ...state,
+        creating: true,
+      };
+      break;
+    }
+
+    case actions.LOGIN_USER_SUCCESS: {
+      newState = {
+        ...state,
+        creating: false,
+        username: '',
+        password: '',
+        passwordConfirm: '',
+      };
+      break;
+    }
+
+    case actions.LOGIN_USER_FAILURE: {
       newState = {
         ...state,
         creating: false,

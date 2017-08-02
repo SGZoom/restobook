@@ -51,6 +51,8 @@
     "express": "^4.15.3",
     "jsonwebtoken": "^7.4.1",
     "mongoose": "^4.11.5",
+    "preact": "^8.2.1",
+    "preact-compat": "^3.16.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-redux": "^5.0.5",

@@ -1,3 +1,4 @@
+const Comment = require('../models/Comment').Comment;
 const Reply = require('../models/Reply').Reply;
 const config = require('../../config');
 const jwt = require('jsonwebtoken');
@@ -110,6 +111,19 @@ function saveReply(text, author, commentId) {
   });
 }
 
+function updateCommentReplyCount(commentId) {
+  Comment
+    .findOne({ _id: commentId })
+    .exec((err, comment) => {
+      if (err) {
+        throw err;
+      } else {
+        comment.replies_count = comment.replies_count + 1; // eslint-disable-line
+        comment.save();
+      }
+    });
+}
+
 module.exports = {
   getReplies: (request, response) => {
     const query = buildQuery(request.query, request.params);
@@ -155,6 +169,8 @@ module.exports = {
           comment_id: commentId,
           reply,
         });
+
+        updateCommentReplyCount(commentId);
       })
       .catch((err) => {
         response.status(500).json(err.message);

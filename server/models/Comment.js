@@ -17,6 +17,10 @@ const CommentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  replies_count: {
+    type: Number,
+    required: true,
+  },
 });
 
 const Comment = mongoose.model('Comment', CommentSchema);

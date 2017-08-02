@@ -6,7 +6,7 @@ import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 import styles from './index.scss';
 
 export default function PostItem(
-  { username, createdAt, text, id },
+  { username, createdAt, text, id, count = 0 },
 ) {
   const postPermalink = `/post/${id}`;
   const userPermalink = `/user/${username}`;
@@ -27,7 +27,7 @@ export default function PostItem(
         id
           ? (
             <div className={styles['comments-cta']}>
-              <Link to={postPermalink}>{'View Comments'}</Link>
+              <Link to={postPermalink}>{`View Comments (${count})`}</Link>
             </div>
           )
           : (null)

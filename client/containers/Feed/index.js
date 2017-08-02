@@ -134,13 +134,20 @@ class FeedContainer extends Component {
         />
 
         {
-          this.props.feed.posts.map(({ username, _id: id, created_at: createdAt, text }) =>
+          this.props.feed.posts.map(({
+            username,
+            _id: id,
+            created_at: createdAt,
+            text,
+            comments_count: count,
+          }) =>
             (<PostItem
               key={id}
               id={id}
               username={username}
               createdAt={createdAt}
               text={text}
+              count={count}
             />),
           )
         }

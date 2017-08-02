@@ -1,3 +1,4 @@
+const Post = require('../models/Post').Post;
 const Comment = require('../models/Comment').Comment;
 const config = require('../../config');
 const jwt = require('jsonwebtoken');
@@ -100,6 +101,7 @@ function saveComment(text, author, postId) {
         username: author,
         post_id: postId,
         created_at: new Date(),
+        replies_count: 0,
       }, (err, comment) => {
         if (err) {
           reject(new Error(err));
@@ -108,6 +110,19 @@ function saveComment(text, author, postId) {
         resolve(comment);
       });
   });
+}
+
+function updatePostCommentCount(postId) {
+  Post
+    .findOne({ _id: postId })
+    .exec((err, post) => {
+      if (err) {
+        throw err;
+      } else {
+        post.comments_count = post.comments_count + 1; // eslint-disable-line
+        post.save();
+      }
+    });
 }
 
 module.exports = {
@@ -154,6 +169,8 @@ module.exports = {
           post_id: postId,
           comment,
         });
+
+        updatePostCommentCount(postId);
       })
       .catch((err) => {
         response.status(500).json(err.message);
