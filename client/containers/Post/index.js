@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import cn from 'classnames';
 
 import styles from './index.scss';
 
@@ -16,7 +18,7 @@ class PostContainer extends Component {
     this.handleCommentCreatorInputChange = this.handleCommentCreatorInputChange.bind(this);
     this.handleCreateComment = this.handleCreateComment.bind(this);
   }
-  componentDidMount() {
+  componentWillMount() {
     const { post_id: postId } = this.props.match.params;
     this.props.dispatch(fetchPost(postId));
     this.props.dispatch(fetchComments(postId));
@@ -36,13 +38,18 @@ class PostContainer extends Component {
     const { post } = this.props.post;
     return (
       <div className={styles.container}>
+
+        <Link to="/" className={cn('mtb20 back')}>{'Go Back'}</Link>
+
         <div>{this.props.post.error}</div>
+
         <PostItem
           key={post.id}
           username={post.username}
           createdAt={post.created_at}
           text={post.text}
         />
+
         {
           this.props.post.comments.map(({ username, _id: id, created_at: createdAt, text }) => (
             <Comment
@@ -53,6 +60,7 @@ class PostContainer extends Component {
             />
           ))
         }
+
         <Creator
           name={'comment'}
           placeholder={'Comment on this thread'}
