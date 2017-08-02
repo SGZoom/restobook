@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styles from './index.scss';
 
-import PostCreator from '../../components/PostCreator';
+import PostCreator from '../../components/Creator';
 import PostItem from '../../components/PostItem';
 import { updateNewPostText, createNewPost, fetchPosts, refreshTimeStamps } from '../../actions/feedActions';
 
@@ -34,14 +34,18 @@ class FeedContainer extends Component {
       <div className={styles.container}>
         <div>{this.props.feed.error}</div>
         <PostCreator
+          name={'post'}
+          placeholder={'What do you want to tell the world?'}
+          btnText={'Post'}
           handleInputChange={this.handlePostCreatorInputChange}
-          createPost={this.handleCreatePost}
+          createHandler={this.handleCreatePost}
           postText={this.props.feed.newPostText}
         />
         {
           this.props.feed.posts.map(({ username, _id: id, created_at: createdAt, text }) =>
             (<PostItem
               key={id}
+              id={id}
               username={username}
               createdAt={createdAt}
               text={text}

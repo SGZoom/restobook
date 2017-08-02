@@ -100,8 +100,7 @@ function saveComment(text, author, postId) {
         username: author,
         post_id: postId,
         created_at: new Date(),
-      })
-      .exec((err, comment) => {
+      }, (err, comment) => {
         if (err) {
           reject(new Error(err));
         }

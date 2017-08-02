@@ -5,13 +5,10 @@ import distanceInWordsToNow from 'date-fns/distance_in_words_to_now';
 
 import styles from './index.scss';
 
-export default function PostItem(
-  { username, createdAt, text, id },
-) {
-  const postPermalink = `/post/${id}`;
+const Comment = ({ username, createdAt, text }) => {
   const userPermalink = `/user/${username}`;
   return (
-    <div className={cn('card mtb20', styles.item)}>
+    <div className={cn('mtb20', styles.item)}>
       <div className={styles.header}>
         <Link to={userPermalink}>
           {username}
@@ -23,15 +20,8 @@ export default function PostItem(
       <div className={cn('mtb40', styles.text)}>
         {text}
       </div>
-      {
-        id
-          ? (
-            <div className={styles['comments-cta']}>
-              <Link to={postPermalink}>{'View Comments'}</Link>
-            </div>
-          )
-          : (null)
-      }
     </div>
   );
-}
+};
+
+export default Comment;
