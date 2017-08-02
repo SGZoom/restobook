@@ -19,7 +19,6 @@ function buildQuery(params = {}) {
   const query = {};
 
   if (author) {
-    console.log(`author: ${author}`);
     query.username = author;
   }
 

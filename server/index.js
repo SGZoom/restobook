@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const socketIO = require('socket.io');
 const mongoose = require('mongoose');
 const path = require('path');
 const config = require('../config');
@@ -45,6 +46,21 @@ app.get('*', (request, response) => {
   response.sendFile(path.resolve(__dirname, '..', 'client', 'build', 'index.html'));
 });
 
-app.listen(config.port, () => {
+const server = app.listen(config.port, () => {
   console.log(`Server running on port ${config.port}`); // eslint-disable-line no-console
+});
+
+const io = socketIO(server);
+
+io.on('connection', (socket) => {
+  console.log(`Someone has connected: ${socket.id}`);
+
+  socket.on('newPost', () => {
+    console.log('new post received');
+    socket.broadcast.emit('fetchNewPost', true);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Someone has disconnected! :( ');
+  });
 });

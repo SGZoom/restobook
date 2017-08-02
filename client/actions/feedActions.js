@@ -9,6 +9,18 @@ export function updateNewPostText(value) {
   };
 }
 
+export function emittedNewPost() {
+  return {
+    type: actions.UNSET_POST_CREATED_FLAG,
+  };
+}
+
+export function showNewPostsAlert() {
+  return {
+    type: actions.SHOW_ALERT,
+  };
+}
+
 export function refreshTimeStamps() {
   return {
     type: actions.UPDATE_POST_TIMESTAMP,
