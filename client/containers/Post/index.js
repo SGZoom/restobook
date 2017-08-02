@@ -9,7 +9,9 @@ import PostItem from '../../components/PostItem';
 import Comment from '../../components/Comment';
 import Creator from '../../components/Creator';
 
-import { updateNewCommentText, createNewComment, fetchPost, fetchComments } from '../../actions/postActions';
+import { updateNewCommentText, createNewComment,
+  fetchPost, fetchComments, fetchReplies, updateNewReply, createNewReply,
+} from '../../actions/postActions';
 
 class PostContainer extends Component {
   constructor(args) {
@@ -17,6 +19,9 @@ class PostContainer extends Component {
 
     this.handleCommentCreatorInputChange = this.handleCommentCreatorInputChange.bind(this);
     this.handleCreateComment = this.handleCreateComment.bind(this);
+    this.handleReplyRequest = this.handleReplyRequest.bind(this);
+    this.updateNewReply = this.updateNewReply.bind(this);
+    this.createNewReply = this.createNewReply.bind(this);
   }
   componentWillMount() {
     const { post_id: postId } = this.props.match.params;
@@ -32,6 +37,22 @@ class PostContainer extends Component {
     const { post_id: postId } = this.props.match.params;
     event.preventDefault();
     this.props.dispatch(createNewComment(postId));
+  }
+
+  handleReplyRequest(commentId, event) {
+    event.preventDefault();
+    this.props.dispatch(fetchReplies(commentId));
+  }
+
+  updateNewReply(commentId, event) {
+    if (event && event.target && event.target.value) {
+      this.props.dispatch(updateNewReply(commentId, event.target.value));
+    }
+  }
+
+  createNewReply(commentId, text, event) {
+    event.preventDefault();
+    this.props.dispatch(createNewReply(commentId, text));
   }
 
   render() {
@@ -51,14 +72,21 @@ class PostContainer extends Component {
         />
 
         {
-          this.props.post.comments.map(({ username, _id: id, created_at: createdAt, text }) => (
-            <Comment
-              key={id}
-              username={username}
-              createdAt={createdAt}
-              text={text}
-            />
-          ))
+          this.props.post.comments
+            .map(({ username, _id: id, created_at: createdAt, text, replies, newReplyText }) => (
+              <Comment
+                key={id}
+                id={id}
+                username={username}
+                createdAt={createdAt}
+                text={text}
+                handleReplyRequest={this.handleReplyRequest}
+                replies={replies}
+                newReplyText={newReplyText}
+                updateNewReply={this.updateNewReply}
+                createNewReply={this.createNewReply}
+              />
+            ))
         }
 
         <Creator

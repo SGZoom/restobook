@@ -13,13 +13,26 @@ class FeedContainer extends Component {
     this.handlePostCreatorInputChange = this.handlePostCreatorInputChange.bind(this);
     this.handleCreatePost = this.handleCreatePost.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
+    this.state = {
+      refreshInterval: null,
+    };
   }
 
   componentWillMount() {
+    console.log('mounted');
     this.props.dispatch(fetchPosts());
-    setInterval(() => {
-      this.props.dispatch(refreshTimeStamps());
-    }, 60000);
+    if (!this.state.refreshInterval) {
+      const refreshInterval = setInterval(() => {
+        this.props.dispatch(refreshTimeStamps());
+      }, 60000);
+      this.setState({ refreshInterval });
+    }
+  }
+
+  componentWillUnmount() {
+    console.log('unmounted');
+    clearInterval(this.state.refreshInterval);
+    this.setState({ refreshInterval: null });
   }
 
   handlePostCreatorInputChange(event) {

@@ -75,6 +75,63 @@ function fetchCommentsFailure(response) {
   };
 }
 
+function fetchRepliesRequest(commentId) {
+  return {
+    type: actions.FETCH_REPLIES_REQUEST,
+    commentId,
+  };
+}
+
+function fetchRepliesSuccess(data) {
+  return {
+    type: actions.FETCH_REPLIES_SUCCESS,
+    data,
+  };
+}
+
+function fetchRepliesFailure(response, commentId) {
+  return {
+    type: actions.FETCH_REPLIES_FAILURE,
+    payload: {
+      message: response,
+    },
+    commentId,
+  };
+}
+
+function createNewReplyRequest(commentId) {
+  return {
+    type: actions.CREATE_NEW_REPLY_REQUEST,
+    commentId,
+  };
+}
+
+function createNewReplySuccess(data) {
+  return {
+    type: actions.CREATE_NEW_REPLY_SUCCESS,
+    data,
+  };
+}
+
+function createNewReplyFailure(response, commentId) {
+  return {
+    type: actions.CREATE_NEW_REPLY_FAILURE,
+    payload: {
+      message: response,
+    },
+    commentId,
+  };
+}
+
+
+export function updateNewReply(commentId, value) {
+  return {
+    type: actions.UPDATE_NEW_REPLY_TEXT,
+    commentId,
+    value,
+  };
+}
+
 export function createNewComment(postId) {
   return (dispatch, getState) => {
     const token = getToken();
@@ -135,3 +192,47 @@ export function fetchComments(postId) {
       });
   };
 }
+
+export function fetchReplies(commentId) {
+  return (dispatch) => {
+    dispatch(fetchRepliesRequest(commentId));
+    request
+      .get(`/api/comments/${commentId}/replies`)
+      .then(response => dispatch(fetchRepliesSuccess(response.data)))
+      .catch((error) => {
+        if (error.response && error.response.data) {
+          dispatch(fetchRepliesFailure(error.response.data, commentId));
+        } else {
+          console.log(error);
+          dispatch(fetchRepliesFailure('Unknown error occurred', commentId));
+        }
+      });
+  };
+}
+
+export function createNewReply(commentId, text) {
+  return (dispatch) => {
+    const token = getToken();
+
+    dispatch(createNewReplyRequest(commentId));
+    request
+      .create({
+        headers: {
+          authorization: `Bearer ${token}`,
+        },
+      })
+      .post(`/api/comments/${commentId}/replies`, {
+        text,
+      })
+      .then(response => dispatch(createNewReplySuccess(response.data)))
+      .catch((error) => {
+        if (error.response && error.response.data) {
+          dispatch(createNewReplyFailure(error.response.data, commentId));
+        } else {
+          console.log(error);
+          dispatch(createNewReplyFailure('Unknown error occurred', commentId));
+        }
+      });
+  };
+}
+

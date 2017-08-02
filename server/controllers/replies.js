@@ -98,10 +98,9 @@ function saveReply(text, author, commentId) {
       .create({
         text,
         username: author,
-        post_id: commentId,
+        comment_id: commentId,
         created_at: new Date(),
-      })
-      .exec((err, reply) => {
+      }, (err, reply) => {
         if (err) {
           reject(new Error(err));
         }
@@ -158,7 +157,7 @@ module.exports = {
         });
       })
       .catch((err) => {
-        response.status(500).json(err);
+        response.status(500).json(err.message);
       });
 
     return null;

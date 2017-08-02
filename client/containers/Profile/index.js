@@ -8,12 +8,28 @@ import PostItem from '../../components/PostItem';
 import { fetchPosts, refreshTimeStamps } from '../../actions/feedActions';
 
 class ProfileContainer extends Component {
+  constructor(args) {
+    super(args);
+    this.state = {
+      refreshInterval: null,
+    };
+  }
+
   componentWillMount() {
     const { user_id: author } = this.props.match.params;
     this.props.dispatch(fetchPosts(author));
-    setInterval(() => {
-      this.props.dispatch(refreshTimeStamps());
-    }, 60000);
+    if (!this.state.refreshInterval) {
+      const refreshInterval = setInterval(() => {
+        this.props.dispatch(refreshTimeStamps());
+      }, 60000);
+      this.setState({ refreshInterval });
+    }
+  }
+
+  componentWillUnmount() {
+    console.log('unmounted');
+    clearInterval(this.state.refreshInterval);
+    this.setState({ refreshInterval: null });
   }
 
   render() {
@@ -30,6 +46,7 @@ class ProfileContainer extends Component {
           this.props.feed.posts.map(({ username, _id: id, created_at: createdAt, text }) =>
             (<PostItem
               key={id}
+              id={id}
               username={username}
               createdAt={createdAt}
               text={text}
