@@ -10,7 +10,7 @@ const Comment = ({ username, id, createdAt, text, handleReplyRequest,
   replies, newReplyText, updateNewReply, createNewReply }) => {
   const userPermalink = `/user/${username}`;
   return (
-    <div className={cn('mtb20', styles.item)}>
+    <div className={cn('ptb10', styles.item)}>
       <div className={styles.header}>
         <span>
           <Link to={userPermalink}>
@@ -24,7 +24,7 @@ const Comment = ({ username, id, createdAt, text, handleReplyRequest,
           <a onClick={event => handleReplyRequest(id, event)} role={'link'} tabIndex={'-1'}>{'Reply'}</a>
         </span>
       </div>
-      <div className={cn('mtb10', styles.text)}>
+      <div className={cn('ptb10', styles.text)}>
         {text}
       </div>
       { replies
@@ -35,6 +35,7 @@ const Comment = ({ username, id, createdAt, text, handleReplyRequest,
             updateNewReply={updateNewReply}
             createNewReply={createNewReply}
             replies={replies}
+            className={styles.replies}
           />
         )
         : null

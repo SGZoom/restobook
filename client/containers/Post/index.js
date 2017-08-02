@@ -7,7 +7,7 @@ import styles from './index.scss';
 
 import PostItem from '../../components/PostItem';
 import Comment from '../../components/Comment';
-import Creator from '../../components/Creator';
+import CommentCreator from '../../components/Creator';
 
 import { updateNewCommentText, createNewComment,
   fetchPost, fetchComments, fetchReplies, updateNewReply, createNewReply,
@@ -71,31 +71,36 @@ class PostContainer extends Component {
           text={post.text}
         />
 
-        {
-          this.props.post.comments
-            .map(({ username, _id: id, created_at: createdAt, text, replies, newReplyText }) => (
-              <Comment
-                key={id}
-                id={id}
-                username={username}
-                createdAt={createdAt}
-                text={text}
-                handleReplyRequest={this.handleReplyRequest}
-                replies={replies}
-                newReplyText={newReplyText}
-                updateNewReply={this.updateNewReply}
-                createNewReply={this.createNewReply}
-              />
-            ))
-        }
+        <div className={styles.comments}>
+          {
+            this.props.post.comments
+              .map(({ username, _id: id, created_at: createdAt, text, replies, newReplyText }) => (
+                <Comment
+                  key={id}
+                  id={id}
+                  username={username}
+                  createdAt={createdAt}
+                  text={text}
+                  handleReplyRequest={this.handleReplyRequest}
+                  replies={replies}
+                  newReplyText={newReplyText}
+                  updateNewReply={this.updateNewReply}
+                  createNewReply={this.createNewReply}
+                />
+              ))
+          }
+          <div className={cn('mtb20')}>
+            <CommentCreator
+              name={'comment'}
+              placeholder={'Comment on this thread'}
+              btnText={'Comment'}
+              handleInputChange={this.handleCommentCreatorInputChange}
+              createHandler={this.handleCreateComment}
+              value={this.props.post.newCommentText}
+            />
+          </div>
+        </div>
 
-        <Creator
-          name={'comment'}
-          placeholder={'Comment on this thread'}
-          btnText={'Comment'}
-          handleInputChange={this.handleCommentCreatorInputChange}
-          createHandler={this.handleCreateComment}
-        />
       </div>
     );
   }

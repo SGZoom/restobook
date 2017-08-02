@@ -52,7 +52,7 @@ export default function reducer(
         ...state,
         creating: false,
         fetching: false,
-        comments: [action.data.comment, ...state.comments],
+        comments: [...state.comments, action.data.comment],
         newCommentText: '',
         error: false,
         message: null,

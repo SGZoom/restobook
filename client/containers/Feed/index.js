@@ -19,7 +19,6 @@ class FeedContainer extends Component {
   }
 
   componentWillMount() {
-    console.log('mounted');
     this.props.dispatch(fetchPosts());
     if (!this.state.refreshInterval) {
       const refreshInterval = setInterval(() => {
@@ -30,7 +29,6 @@ class FeedContainer extends Component {
   }
 
   componentWillUnmount() {
-    console.log('unmounted');
     clearInterval(this.state.refreshInterval);
     this.setState({ refreshInterval: null });
   }
@@ -53,7 +51,7 @@ class FeedContainer extends Component {
   render() {
     return (
       <div className={styles.container}>
-        <input value={'Log Out'} onClick={this.handleLogout} className={'btn btn-primary mtb10'} />
+        <input value={'Log Out'} onClick={this.handleLogout} className={'mtb30 btn btn-primary'} />
 
         <div>{this.props.feed.error}</div>
 

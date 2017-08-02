@@ -1,6 +1,10 @@
 @import '../../styles/variables.scss';
 
 .item {
+
+  border-left: 3px solid $light-grey;
+  padding-left: 20px;
+
   .header {
     color: $grey;
     font-weight: 200;
@@ -43,5 +47,9 @@
       transition: all 0.2s ease-out;
       outline: none;
     }
+  }
+
+  .replies {
+    padding-left: 5%;
   }
 }
