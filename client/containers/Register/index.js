@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import cn from 'classnames';
 
 import styles from './index.scss';
@@ -31,6 +32,7 @@ class RegisterContainer extends Component {
     return (
       <div className={styles.container}>
         <form onSubmit={this.handleRegister} className={'card'}>
+          <h1 className={cn('mtb10', styles.heading)}>{'Register'}</h1>
           <input
             type="text"
             name="username"
@@ -62,6 +64,16 @@ class RegisterContainer extends Component {
               ? <div>{this.props.user.message}</div>
               : null
           }
+          <div className={cn('mtb10', styles.cta)}>
+            <p>
+              {'Already have an account?'}
+              <span>
+                <Link to="/login">
+                  {'Login here'}
+                </Link>
+              </span>
+            </p>
+          </div>
         </form>
       </div>
     );

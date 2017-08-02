@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import cn from 'classnames';
 
 import styles from './index.scss';
@@ -31,6 +32,7 @@ class LoginContainer extends Component {
     return (
       <div className={styles.container}>
         <form onSubmit={this.handleLogin} className={'card'}>
+          <h1 className={cn('mtb10', styles.heading)}>{'Login'}</h1>
           <input
             type="text"
             name="username"
@@ -48,13 +50,23 @@ class LoginContainer extends Component {
           <input
             type="submit"
             value="Login"
-            className={cn('btn btn-primary mtb10', styles['register-button'])}
+            className={cn('btn btn-primary mtb10', styles['login-button'])}
           />
           {
             this.props.user.message
               ? <div>{this.props.user.message}</div>
               : null
           }
+          <div className={cn('mtb10', styles.cta)}>
+            <p>
+              {"Don't have an account?"}
+              <span>
+                <Link to="/register">
+                  {'Register here'}
+                </Link>
+              </span>
+            </p>
+          </div>
         </form>
       </div>
     );
