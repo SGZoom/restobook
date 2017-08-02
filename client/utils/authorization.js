@@ -7,24 +7,21 @@ const fetchUserToken = () => {
   return store.getItem('token');
 };
 
-export const requireAuthentication = (nextState, replace) => {
-  // return true;
+export const requireAuthentication = () => {
   const token = fetchUserToken();
   if (!token) {
-    replace({
-      pathname: '/login',
-    });
+    // ideally there should be a token verification here
+    return true;
   }
+  return false;
 };
 
-export const redirectIfAuthenticated = (nextState, replace) => {
-  // return true;
+export const redirectIfAuthenticated = () => {
   const token = fetchUserToken();
   if (token) {
-    replace({
-      pathname: '/',
-    });
+    return true;
   }
+  return false;
 };
 
 export const setToken = (token) => {

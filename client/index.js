@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 import FeedContainer from './containers/Feed';
@@ -9,6 +9,7 @@ import PostContainer from './containers/Post';
 import RegisterContainer from './containers/Register';
 import LoginContainer from './containers/Login';
 
+import { requireAuthentication, redirectIfAuthenticated } from './utils/authorization';
 import store from './store';
 import './styles/index.scss';
 
@@ -18,16 +19,48 @@ const App = () => (
   <Provider store={store}>
     <Router>
       <div>
-        <Route exact path="/" component={FeedContainer} />
-        <Route exact path="/register" component={RegisterContainer} />
-        <Route exact path="/login" component={LoginContainer} />
+        <Route
+          exact
+          path="/"
+          render={() => (
+            requireAuthentication()
+              ? <Redirect to="/login" />
+              : <FeedContainer />
+          )}
+        />
+        <Route
+          exact
+          path="/register"
+          render={() => (
+            redirectIfAuthenticated()
+              ? <Redirect to="/" />
+              : <RegisterContainer />
+          )}
+        />
+        <Route
+          exact
+          path="/login"
+          render={() => (
+            redirectIfAuthenticated()
+              ? <Redirect to="/" />
+              : <LoginContainer />
+          )}
+        />
         <Route
           path="/user/:user_id"
-          component={ProfileContainer}
+          render={() => (
+            requireAuthentication()
+              ? <Redirect to="/login" />
+              : <ProfileContainer />
+          )}
         />
         <Route
           path="/post/:post_id"
-          component={PostContainer}
+          render={() => (
+            requireAuthentication()
+              ? <Redirect to="/login" />
+              : <PostContainer />
+          )}
         />
       </div>
     </Router>
