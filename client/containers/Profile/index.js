@@ -4,12 +4,15 @@ import cn from 'classnames';
 import styles from './index.scss';
 
 import PostItem from '../../components/PostItem';
-import { fetchPosts } from '../../actions/feedActions';
+import { fetchPosts, refreshTimeStamps } from '../../actions/feedActions';
 
 class ProfileContainer extends Component {
   componentDidMount() {
     const { user_id: author } = this.props.match.params;
     this.props.dispatch(fetchPosts(author));
+    setInterval(() => {
+      this.props.dispatch(refreshTimeStamps());
+    }, 60000);
   }
 
   render() {

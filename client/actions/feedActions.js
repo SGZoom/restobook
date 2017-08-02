@@ -9,6 +9,12 @@ export function updateNewPostText(value) {
   };
 }
 
+export function refreshTimeStamps() {
+  return {
+    type: actions.UPDATE_POST_TIMESTAMP,
+  };
+}
+
 function createNewPostRequest() {
   return {
     type: actions.CREATE_NEW_POST_REQUEST,

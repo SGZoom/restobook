@@ -36,6 +36,7 @@ export default function reducer(
         creating: false,
         fetching: false,
         posts: [action.data, ...state.posts],
+        newPostText: '',
         error: false,
         message: null,
       };
@@ -108,6 +109,14 @@ export default function reducer(
         creating: false,
         error: true,
         message: action.payload,
+      };
+      break;
+    }
+
+    case actions.UPDATE_POST_TIMESTAMP: {
+      newState = {
+        ...state,
+        posts: [...state.posts],
       };
       break;
     }

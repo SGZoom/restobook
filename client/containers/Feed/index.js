@@ -4,7 +4,7 @@ import styles from './index.scss';
 
 import PostCreator from '../../components/PostCreator';
 import PostItem from '../../components/PostItem';
-import { updateNewPostText, createNewPost, fetchPosts } from '../../actions/feedActions';
+import { updateNewPostText, createNewPost, fetchPosts, refreshTimeStamps } from '../../actions/feedActions';
 
 class FeedContainer extends Component {
   constructor(args) {
@@ -15,6 +15,9 @@ class FeedContainer extends Component {
 
   componentDidMount() {
     this.props.dispatch(fetchPosts());
+    setInterval(() => {
+      this.props.dispatch(refreshTimeStamps());
+    }, 60000);
   }
 
   handlePostCreatorInputChange(event) {
