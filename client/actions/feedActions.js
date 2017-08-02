@@ -80,11 +80,13 @@ function fetchPostsFailure(response) {
   };
 }
 
-export function fetchPosts() {
+export function fetchPosts(author) {
+  const authorQuery = author ? `&author=${author}` : '';
+
   return (dispatch) => {
     dispatch(fetchPostsRequest());
     request
-      .get(`/api/posts?max_time=${Date.now()}`)
+      .get(`/api/posts?max_time=${Date.now()}${authorQuery}`)
       .then(response => dispatch(fetchPostsSuccess(response.data)))
       .catch((error) => {
         if (error.response && error.response.data) {

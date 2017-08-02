@@ -47,19 +47,21 @@ const App = () => (
           )}
         />
         <Route
+          exact
           path="/user/:user_id"
-          render={() => (
+          render={props => (
             requireAuthentication()
               ? <Redirect to="/login" />
-              : <ProfileContainer />
+              : <ProfileContainer {...props} />
           )}
         />
         <Route
+          exact
           path="/post/:post_id"
-          render={() => (
+          render={props => (
             requireAuthentication()
               ? <Redirect to="/login" />
-              : <PostContainer />
+              : <PostContainer {...props} />
           )}
         />
       </div>
